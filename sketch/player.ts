@@ -1,17 +1,17 @@
 let speedMultiplyer: number = 0.01;
 let speedDecrese: number = 0.02;
 let bouncePenalty: number = 1
-let breakMultiplier: number = 0.05;
+let breakMultiplier: number = 0.1;
 let lifeTimeOut: number = 1;
 let startLives: number = 26;
 
 class Player {
 
-    speedX: number = 0
-    speedY: number = 0
+    speedX: any = 0
+    speedY: any = 0
     log: HTMLElement;
     shouldLog: string;
-    deltaTime: number;
+    deltaTime: number = 1;
 
     life: number = startLives;
     lifeTimer: number = 0;
@@ -19,44 +19,53 @@ class Player {
     alive: boolean = true
 
     bodyParts: Path[] = [];
+    input: Inputs;
 
+    ai: AI;
 
 
     score: number = 0;
-    constructor(public posX: number, public posY: number, public size: number, ) {
-        this.log = document.getElementById('log');
+    constructor(public posX: any, public posY: any, public size: number, ) {
 
+        this.log = document.getElementById('log');
+        this.ai = new AI();
     }
 
     draw() {
-
         this.bodyParts.push({ posX: this.posX, posY: this.posY });
         while (this.bodyParts.length > this.life)
             this.bodyParts.shift();
         for (let i = this.bodyParts.length - 1; i >= 0; i--) {
             let r = (255 / startLives) * i;
-            fill(r, 0, 0)
+            let g = (128 / startLives) * i;
+            let b = (64 / startLives) * i;
+            fill(r, g, b)
             rect(this.bodyParts[i].posX, this.bodyParts[i].posY, this.size, this.size)
         }
     }
 
     update(food: Food) {
         this.deltaTime = 1000 / frameRate();
+        if (this.deltaTime > 10000) {
+            this.deltaTime = 10000;
+        }
         this.lifeTimer = this.deltaTime + this.lifeTimer;
         if (this.alive) {
+            this.input = this.ai.update(this, food)
             this.handleInput();
             this.checkCollision();
             this.move();
             this.draw();
             this.setLog();
             this.checkLife();
+            this.checkCollision();
             this.addToLog(`Distance to food: ${this.distanceToFood(food)}`)
             this.addToLog(`Score: ${this.score}`);
         }
     }
 
     handleInput() {
-        if (keyIsDown(LEFT_ARROW)) {
+        if (this.input.xVal < 0 || keyIsDown(LEFT_ARROW)) {
             if (this.speedX < 0) {
                 this.speedX -= speedMultiplyer * this.deltaTime
             } else {
@@ -64,28 +73,28 @@ class Player {
             }
         }
 
-        if (keyIsDown(RIGHT_ARROW)) {
+        if (this.input.xVal > 0 || keyIsDown(RIGHT_ARROW)) {
             if (this.speedX > 0) {
                 this.speedX += speedMultiplyer * this.deltaTime
             } else {
                 this.speedX += breakMultiplier * this.deltaTime
             }
         }
-        if (keyIsDown(DOWN_ARROW)) {
+        if (this.input.yVal < 0 || keyIsDown(UP_ARROW)) {
             if (this.speedY > 0) {
                 this.speedY += speedMultiplyer * this.deltaTime
             } else {
                 this.speedY += breakMultiplier * this.deltaTime
             }
         }
-        if (keyIsDown(UP_ARROW)) {
+        if (this.input.yVal > 0 || keyIsDown(DOWN_ARROW)) {
             if (this.speedY < 0) {
                 this.speedY -= 1 * speedMultiplyer * this.deltaTime
             } else {
                 this.speedY -= 1 * breakMultiplier * this.deltaTime
             }
         }
-        if (!keyIsPressed) {
+        if (this.input.xVal == 0 && this.input.yVal == 0) {
             if (Math.abs(this.speedX) < 0.1) {
                 this.speedX = 0;
             } else {
@@ -97,6 +106,8 @@ class Player {
                 this.speedY -= this.speedY * (speedDecrese) * this.deltaTime;
             }
         }
+
+        console.log(this.speedX)
         this.move();
         this.addToLog(`SpeedX: ${this.speedX.toFixed(4)} <br>SpeedY: ${this.speedY.toFixed(4)}`)
         this.addToLog(`PosX: ${this.posX.toFixed(4)} <br>PosY: ${this.posY.toFixed(4)}`)

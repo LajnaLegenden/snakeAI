@@ -1,11 +1,11 @@
 
 let game: Game;
+let ai: AI;
 
 
 function setup() {
     createCanvas(windowWidth, windowHeight);
     game = new Game();
-
 }
 
 function windowResized() {
