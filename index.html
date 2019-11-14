@@ -1,21 +1,50 @@
 <html>
-    <head>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.8.0/p5.js"></script>  
-        <script src="build/build.js"></script>
 
-        <link rel="shortcut icon" href="https://p5js.org/assets/img/favicon.ico">
-            <link rel="icon" href="https://p5js.org/assets/img/favicon.ico">
+<head>
+    <script src="https://cs.stanford.edu/people/karpathy/convnetjs/build/convnet-min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.8.0/p5.js"></script>
+    <script src="build/build.js"></script>
 
-        <style>
-            * {
-                padding: 0px;
-                margin: 0px;
-            }
-        </style>
-        <script>
-        </script>
-    </head>
-    <body>
-        
-    </body>
+    <link rel="shortcut icon" href="https://p5js.org/assets/img/favicon.ico">
+    <link rel="icon" href="https://p5js.org/assets/img/favicon.ico">
+
+    <style>
+        * {
+            padding: 0px;
+            margin: 0px;
+            overflow: hidden;
+        }
+
+        #log {
+            position: fixed;
+            z-index: 10;
+            right: 0;
+            bottom: 0;
+        }
+    </style>
+    <script type="text/javascript">
+
+        function periodic() {
+            var d = document.getElementById('egdiv');
+            d.innerHTML = 'Random number: ' + Math.random()
+        }
+
+        var net; // declared outside -> global variable in window scope
+        function start() {
+            // this gets executed on startup
+            //...
+            net = new convnetjs.Net();
+            // ...
+
+            // example of running something every 1 second
+            setInterval(periodic, 1000);
+        }
+
+    </script>
+</head>
+
+<body>
+    <p id="log"></p>
+</body>
+
 </html>

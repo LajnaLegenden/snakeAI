@@ -1,8 +1,11 @@
-let morph: Morph;
+
+let game: Game;
+
+
 function setup() {
-    createCanvas(windowWidth, windowHeight)
-    morph = new Morph();
-    morph.setup();
+    createCanvas(windowWidth, windowHeight);
+    game = new Game();
+
 }
 
 function windowResized() {
@@ -10,6 +13,5 @@ function windowResized() {
 }
 
 function draw() {
-    background(100);
-    morph.draw();
+    game.update();
 }
